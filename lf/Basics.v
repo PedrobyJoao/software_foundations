@@ -334,11 +334,13 @@ Example test_nandb1:               (nandb true false) = true.
 Proof. simpl. reflexivity. Qed.
 
 Example test_nandb2:               (nandb false false) = true.
-(* FILL IN HERE *) Admitted.
+Proof. simpl. reflexivity. Qed.
+
 Example test_nandb3:               (nandb false true) = true.
-(* FILL IN HERE *) Admitted.
+Proof. simpl. reflexivity. Qed.
+
 Example test_nandb4:               (nandb true true) = false.
-(* FILL IN HERE *) Admitted.
+Proof. simpl. reflexivity. Qed.
 (** [] *)
 
 (** **** Exercise: 1 star, standard (andb3)
@@ -347,17 +349,23 @@ Example test_nandb4:               (nandb true true) = false.
     return [true] when all of its inputs are [true], and [false]
     otherwise. *)
 
-Definition andb3 (b1:bool) (b2:bool) (b3:bool) : bool
-  (* REPLACE THIS LINE WITH ":= _your_definition_ ." *). Admitted.
+Definition andb3 (b1:bool) (b2:bool) (b3:bool) : bool :=
+  match b1 with
+  | false => false
+  | true => andb b2 b3
+  end.
 
 Example test_andb31:                 (andb3 true true true) = true.
-(* FILL IN HERE *) Admitted.
+Proof. simpl. reflexivity. Qed.
+
 Example test_andb32:                 (andb3 false true true) = false.
-(* FILL IN HERE *) Admitted.
+Proof. simpl. reflexivity. Qed.
+
 Example test_andb33:                 (andb3 true false true) = false.
-(* FILL IN HERE *) Admitted.
+Proof. simpl. reflexivity. Qed.
+
 Example test_andb34:                 (andb3 true true false) = false.
-(* FILL IN HERE *) Admitted.
+Proof. simpl. reflexivity. Qed.
 (** [] *)
 
 (* ================================================================= *)
@@ -410,6 +418,14 @@ Inductive color : Type :=
   | black
   | white
   | primary (p : rgb).
+
+
+(** Personal tests **)
+Check primary red
+  : color.
+Check primary
+  : rgb -> color. (** are constructors functions then? **)
+(** Personal tests END**)
 
 (** Let's look at this in a little more detail.
 
@@ -737,6 +753,8 @@ Fixpoint plus (n : nat) (m : nat) : nat :=
 Compute (plus 3 2).
 (* ===> 5 : nat *)
 
+(** IMPORTANT NOTE *)
+
 (** The steps of simplification that Coq performs here can be
     visualized as follows: *)
 
@@ -798,13 +816,17 @@ Fixpoint exp (base power : nat) : nat :=
     factorial was not found in the current environment," it means
     you've forgotten the [:=]. *)
 
-Fixpoint factorial (n:nat) : nat
-  (* REPLACE THIS LINE WITH ":= _your_definition_ ." *). Admitted.
+Fixpoint factorial (n:nat) : nat :=
+  match n with
+  | O => S O
+  | S n' => mult n (factorial n')
+  end.
 
 Example test_factorial1:          (factorial 3) = 6.
-(* FILL IN HERE *) Admitted.
+Proof. simpl. reflexivity. Qed.
+
 Example test_factorial2:          (factorial 5) = (mult 10 12).
-(* FILL IN HERE *) Admitted.
+Proof. simpl. reflexivity. Qed.
 (** [] *)
 
 (** Again, we can make numerical expressions easier to read and write
@@ -897,8 +919,19 @@ Proof. simpl. reflexivity.  Qed.
     function.  (It can be done with just one previously defined
     function, but you can use two if you want.) *)
 
-Definition ltb (n m : nat) : bool
-  (* REPLACE THIS LINE WITH ":= _your_definition_ ." *). Admitted.
+(** 
+if leq n m
+  match n, m
+   | 
+else
+  false
+*)
+Definition ltb (n m : nat) : bool :=
+  match n, m with
+  | O  , O => false
+  | O  , _ => true
+  | S n' , O => false
+  | S n' , S m' => match
 
 Notation "x <? y" := (ltb x y) (at level 70) : nat_scope.
 
