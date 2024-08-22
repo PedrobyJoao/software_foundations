@@ -922,25 +922,77 @@ Proof. simpl. reflexivity.  Qed.
 (** 
 if leq n m
   match n, m
-   | 
+   |  f
 else
   false
 *)
+Definition ltb' (n m : nat) : bool :=
+   if leb n m then  
+      if eqb n m then false
+      else true
+    else false.
+
+(**
+   MY-NOTES
+
+The following func does not work as it seems pattern matching
+is based only on *CONSTRUCTORS*, so I can not match variables
+with other variables.
+
+nats can be matched only with expressions contaning: O or (S _)
+Where `_` is anything, and when we write `S n'`, n' means the
+same as '_', and therefore, `S n'` == `S m'`
+
+[
+Definition wrong_ltb (n m : nat) : bool :=
+  match n with
+  | O => match m with
+         | O => false
+         | S m' => true
+         end
+  | S n' => match m with
+         | O => false
+         | S n' => false
+         | S m' =>  true
+          end
+  end.
+]
+*)
+
+(** 
+   MY-NOTES
+
+Try: try to remove one of the match lines such as O => false 
+
+It seems pattern matching requires explict matching of all
+   constructors of the to-be match type.
+*)
 Definition ltb (n m : nat) : bool :=
-  match n, m with
-  | O  , O => false
-  | O  , _ => true
-  | S n' , O => false
-  | S n' , S m' => match
+  match n with
+  | O => match m with
+         | O => false
+         | S m' => true
+         end
+  | S n' => match m with
+         | O => false
+         | S m' =>  leb (S n') m'
+          end
+  end.
 
 Notation "x <? y" := (ltb x y) (at level 70) : nat_scope.
 
 Example test_ltb1:             (ltb 2 2) = false.
-(* FILL IN HERE *) Admitted.
+Proof. simpl. reflexivity.  Qed.
 Example test_ltb2:             (ltb 2 4) = true.
-(* FILL IN HERE *) Admitted.
+Proof. simpl. reflexivity.  Qed.
 Example test_ltb3:             (ltb 4 2) = false.
-(* FILL IN HERE *) Admitted.
+Proof. simpl. reflexivity.  Qed.
+Example test_ltb4:             (ltb 0 0) = false.
+Proof. simpl. reflexivity.  Qed.
+Example test_ltb5:             (ltb 1 0) = false.
+Proof. simpl. reflexivity.  Qed.
+Example test_ltb6:             (ltb 0 1) = true.
+Proof. simpl. reflexivity.  Qed.
 (** [] *)
 
 (* ################################################################# *)
@@ -1006,6 +1058,7 @@ Proof.
     [Example] and [Theorem] (and a few others, including [Lemma],
     [Fact], and [Remark]) mean pretty much the same thing to Coq.
 
+   IMPORTANT-NOTES
     Second, we've added the quantifier [forall n:nat], so that our
     theorem talks about _all_ natural numbers [n].  Informally, to
     prove theorems of this form, we generally start by saying "Suppose
@@ -1076,11 +1129,16 @@ Proof.
   intros n m.
   (* move the hypothesis into the context: *)
   intros H.
+  simpl. (* it doesn't do anything*)
   (* rewrite the goal using the hypothesis: *)
+  (* it's not the same arrow of conditional statements*)
+  (* Try: change arrow side*)
   rewrite -> H.
   reflexivity.  Qed.
 
-(** The first line of the proof moves the universally quantified
+(** 
+   IMPORTANT-NOTES
+   The first line of the proof moves the universally quantified
     variables [n] and [m] into the context.  The second moves the
     hypothesis [n = m] into the context and gives it the name [H].
     The third tells Coq to rewrite the current goal ([n + n = m + m])
@@ -1101,7 +1159,12 @@ Proof.
 Theorem plus_id_exercise : forall n m o : nat,
   n = m -> m = o -> n + m = m + o.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n m o.
+  intros H.
+  rewrite -> H. 
+  intros H1.
+  rewrite -> H1. 
+  reflexivity. Qed.
 (** [] *)
 
 (** The [Admitted] command tells Coq that we want to skip trying
@@ -1129,6 +1192,9 @@ Check mult_n_O.
 Check mult_n_Sm.
 (* ===> forall n m : nat, n * m + n = n * S m *)
 
+Check plus_id_exercise.
+(* ===> forall n m o : nat, n = m -> m = o -> n + m = m + o *)
+
 (** We can use the [rewrite] tactic with a previously proved theorem
     instead of a hypothesis from the context. If the statement of the
     previously proved theorem involves quantified variables, as in the
@@ -1146,13 +1212,15 @@ Proof.
 
 (** **** Exercise: 1 star, standard (mult_n_1)
 
-    Use [mult_n_Sm] and [mult_n_0] to prove the following
+    Use [mult_n_Sm] and [mult_n_O] to prove the following
     theorem.  (Recall that [1] is [S O].) *)
-
 Theorem mult_n_1 : forall p : nat,
   p * 1 = p.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros p.
+  rewrite <- mult_n_Sm.
+  rewrite <- mult_n_O.
+  reflexivity. Qed.
 
 (** [] *)
 
@@ -1264,8 +1332,7 @@ Theorem negb_involutive : forall b : bool,
   negb (negb b) = b.
 Proof.
   intros b. destruct b eqn:E.
-  - reflexivity.
-  - reflexivity.  Qed.
+  - reflexivity. - reflexivity.  Qed.
 
 (** Note that the [destruct] here has no [as] clause because
     none of the subcases of the [destruct] need to bind any variables,
@@ -1349,11 +1416,33 @@ Qed.
     Hint 2: When you reach a contradiction in the hypotheses, focus on
     how to [rewrite] with that contradiction. *)
 
+
+(* TODO: check math logic book to understand why the proof is correct *)
 Theorem andb_true_elim2 : forall b c : bool,
   andb b c = true -> c = true.
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  intros b c. destruct b eqn:Eb.
+  - destruct c eqn:Ec.
+    {
+      intros H.
+      reflexivity.
+    }
+    {
+      intros H1.
+      rewrite <- H1.
+      reflexivity.
+    }
+  - destruct c eqn:Ec.
+    {
+      intros H2.
+      reflexivity.
+    }
+    {
+      intros H3.
+      rewrite <- H3.
+      reflexivity.
+    }
+Qed.
 
 (** Before closing the chapter, let's mention one final
     convenience.  As you may have noticed, many proofs perform case

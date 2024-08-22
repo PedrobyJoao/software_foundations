@@ -1,1 +1,5 @@
+*.html
+*.glob
+*.vo*
+
 .aider*
