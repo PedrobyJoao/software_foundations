@@ -38,7 +38,10 @@
           ];
 
           shellHook = ''
-            echo "Welcome to the Coq development environment!"
+            echo ""
+            echo "We are trying to prove ourselves wrong as quickly as possible, because only in that way can we find progress."
+            echo "― Richard P. Feynman"
+            echo ""
             echo "Coq version: $(coqc --version)"
           '';
         };
