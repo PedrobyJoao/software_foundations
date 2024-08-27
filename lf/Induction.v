@@ -174,6 +174,8 @@ Proof.
     are introduced (so the first part of the [as...] is empty), and
     the goal becomes [0 = 0 + 0], which follows by simplification.
 
+
+    IMPORTANT-NOTE
     In the second subgoal, [n] is replaced by [S n'], and the
     assumption [n' + 0 = n'] is added to the context with the name
     [IHn'] (i.e., the Induction Hypothesis for [n']).  These two names
@@ -204,22 +206,50 @@ Proof.
 Theorem mul_0_r : forall n:nat,
   n * 0 = 0.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  induction n as [| n' IHn'].
+  - reflexivity.
+  - simpl.
+    rewrite -> IHn'.
+    reflexivity.
+Qed.
 
 Theorem plus_n_Sm : forall n m : nat,
   S (n + m) = n + (S m).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n m.
+  induction n as [| n' IHn'].
+  - simpl.
+    reflexivity.
+  - simpl.
+    rewrite -> IHn'.
+    reflexivity.
+Qed.
 
 Theorem add_comm : forall n m : nat,
   n + m = m + n.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n m.
+  induction n as [| n' IHn'].
+  - simpl.
+    rewrite -> add_0_r.
+    reflexivity.
+  - simpl.
+    rewrite <- plus_n_Sm.
+    rewrite <- IHn'.
+    reflexivity.
+Qed.
 
 Theorem add_assoc : forall n m p : nat,
   n + (m + p) = (n + m) + p.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n m p.
+  induction n as [| n' IHn'].
+  - simpl.
+    reflexivity.
+  - simpl.
+    rewrite <- IHn'.
+    reflexivity.
+Qed.
 (** [] *)
 
 (** **** Exercise: 2 stars, standard (double_plus)
@@ -236,7 +266,14 @@ Fixpoint double (n:nat) :=
 
 Lemma double_plus : forall n, double n = n + n .
 Proof.
-  (* FILL IN HERE *) Admitted.
+  induction n as [| n' IHn'].
+  - simpl.
+    reflexivity.
+  - simpl.
+    rewrite -> IHn'.
+    rewrite <- plus_n_Sm.
+    reflexivity.
+Qed.
 (** [] *)
 
 (** **** Exercise: 2 stars, standard (eqb_refl)
@@ -246,7 +283,13 @@ Proof.
 Theorem eqb_refl : forall n : nat,
   (n =? n) = true.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  induction n as [| n' IHn'].
+  - simpl.
+    reflexivity.
+  - simpl.
+    rewrite -> IHn'.
+    reflexivity.
+Qed.
 (** [] *)
 
 (** **** Exercise: 2 stars, standard, optional (even_S)

@@ -4,9 +4,9 @@
 
 #### Enumerated types
 
-- Constructors
+- Constructors: what are? (they can be any token really)
 
-- Are constructor functions?
+- Are constructor functions? (related to: args applied to constructors)
 
 > These are all things that can be applied to a number to yield a
 > number. However, there is a fundamental difference between [S]
@@ -31,4 +31,15 @@
 > recursively check whether [n-2] is even. Such functions are
 > introduced with the keyword [Fixpoint] instead of [Definition].
 
-TODO
+- _destruction_ and _pattern matching_ relies on the constructors
+
+## Basics
+
+> Question: I got the point that we can have a certain func `fn`,
+> build theorems for it and prove them. However, is it correct to say that
+> for `fn` to be really reliable, we have to build and prove several theorems?
+> (like building different test scenarios for unit tests).
+
+## Induction
+
+- Difference between `destruction` and `induction` (the latter creates an assumption)
