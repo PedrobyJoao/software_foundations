@@ -1417,7 +1417,6 @@ Qed.
     how to [rewrite] with that contradiction. *)
 
 
-(* TODO: check math logic book to understand why the proof is correct *)
 Theorem andb_true_elim2 : forall b c : bool,
   andb b c = true -> c = true.
 Proof.
@@ -1434,6 +1433,7 @@ Proof.
     }
   - destruct c eqn:Ec.
     {
+      (*Reminder: x->b. If x == true and b == false, the statement is false.*)
       intros H2.
       reflexivity.
     }
@@ -1482,8 +1482,10 @@ Qed.
 Theorem zero_nbeq_plus_1 : forall n : nat,
   0 =? (n + 1) = false.
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  intros [].
+  - reflexivity.
+  - reflexivity.
+Qed.
 
 (* ================================================================= *)
 (** ** More on Notation (Optional) *)
@@ -1557,6 +1559,7 @@ Fixpoint plus' (n : nat) (m : nat) : nat :=
     necessary to write functions in slightly unnatural ways. *)
 
 (** **** Exercise: 2 stars, standard, optional (decreasing)
+    TODO
 
     To get a concrete sense of this, find a way to write a sensible
     [Fixpoint] definition (of a simple function on numbers, say) that
@@ -1587,8 +1590,12 @@ Theorem identity_fn_applied_twice :
   (forall (x : bool), f x = x) ->
   forall (b : bool), f (f b) = b.
 Proof.
-  (* FILL IN HERE *) Admitted.
-
+  (* FILL IN HERE *) 
+  intros f x b.
+  rewrite <- x.
+  rewrite -> x.
+  reflexivity.
+Qed.
 (** [] *)
 
 (** **** Exercise: 1 star, standard (negation_fn_applied_twice)
@@ -1598,6 +1605,19 @@ Proof.
     function [f] has the property that [f x = negb x]. *)
 
 (* FILL IN HERE *)
+Theorem negation_fn_applied_twice :
+  forall (f : bool -> bool),
+  (forall (x : bool), f x = negb x)->
+  forall (b : bool), f (f b) = b.
+Proof.
+  (* FILL IN HERE *) 
+  intros f x b.
+  rewrite -> x.
+  rewrite -> x.
+  destruct b eqn:Eb.
+  - reflexivity.
+  - reflexivity.
+Qed.
 
 (* Do not modify the following line: *)
 Definition manual_grade_for_negation_fn_applied_twice : option (nat*string) := None.
@@ -1612,13 +1632,64 @@ Definition manual_grade_for_negation_fn_applied_twice : option (nat*string) := N
     [destruct] and [rewrite], but destructing everything in sight is
     not the best way.) *)
 
-Theorem andb_eq_orb :
+(* Identity and universal bound laws theorems could be
+  just one theorem each but I don't know how to 
+  make a theorem with two statements within coq syntax
+  *)
+Theorem identity_bool_and:
+  forall (n: bool),
+  andb true n = n.
+Proof.
+  intros [].
+  - reflexivity.
+  - reflexivity.
+Qed.
+
+Theorem identity_bool_or:
+  forall (n: bool),
+  orb false n = n.
+Proof.
+  intros [].
+  - reflexivity.
+  - reflexivity.
+Qed.
+
+Theorem universal_bound_or:
+  forall (n: bool),
+  orb true n = true.
+Proof.
+  intros [].
+  - reflexivity.
+  - reflexivity.
+Qed.
+
+Theorem universal_bound_and:
+  forall (n: bool),
+  andb false n = false.
+Proof.
+  intros [].
+  - reflexivity.
+  - reflexivity.
+Qed.
+
+Theorem andb_eq_orb:
   forall (b c : bool),
   (andb b c = orb b c) ->
   b = c.
 Proof.
-  (* FILL IN HERE *) Admitted.
-
+  (* FILL IN HERE *) 
+  intros b c. destruct b eqn:Eb.
+  - rewrite -> identity_bool_and. 
+    rewrite -> universal_bound_or.
+    intros H.
+    rewrite <- H.
+    reflexivity.
+  - rewrite -> universal_bound_and. 
+    rewrite -> identity_bool_or.
+    intros H. 
+    rewrite <- H.
+    reflexivity.
+Qed.
 (** [] *)
 
 (* ================================================================= *)
@@ -1720,7 +1791,14 @@ Compute letter_comparison B F.
 Theorem letter_comparison_Eq :
   forall l, letter_comparison l l = Eq.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  (* FILL IN HERE *) 
+  intros [].
+  - reflexivity.
+  - reflexivity.
+  - reflexivity.
+  - reflexivity.
+  - reflexivity.
+Qed.
 (** [] *)
 
 (** We can follow the same strategy to define the comparison operation
@@ -1752,7 +1830,8 @@ Definition modifier_comparison (m1 m2 : modifier) : comparison :=
     possibilities. *)
 
 Definition grade_comparison (g1 g2 : grade) : comparison
-  (* REPLACE THIS LINE WITH ":= _your_definition_ ." *). Admitted.
+
+
 
 (** The following "unit tests" of your [grade_comparison] function
     should pass once you have defined it correctly. *)
