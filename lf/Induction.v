@@ -304,7 +304,16 @@ Qed.
 Theorem even_S : forall n : nat,
   even (S n) = negb (even n).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  (* FILL IN HERE *)
+  induction n as [| n' IHn'].
+  - simpl.
+    reflexivity.
+  - rewrite -> IHn'.
+    simpl.
+    rewrite -> negb_involutive.
+    reflexivity.
+Qed.
+
 (** [] *)
 
 (* ################################################################# *)
@@ -438,6 +447,9 @@ Proof. intros n m p. induction n as [| n' IHn']. reflexivity.
     is difficult to make much sense of it.  We can use comments and
     bullets to show the structure a little more clearly... *)
 
+(*
+S n' + (m + p) = S n' + m + p
+*)
 Theorem add_assoc'' : forall n m p : nat,
   n + (m + p) = (n + m) + p.
 Proof.
@@ -499,7 +511,31 @@ Proof.
 
     Theorem: Addition is commutative.
 
-    Proof: (* FILL IN HERE *)
+    _Theorem_: For any [n] and [m],
+
+      n + m = m + n.
+
+    _Proof_:  By induction on [n].
+    
+      - First, suppose [n = 0]. We mush show that
+
+        0 + m = m + 0.
+
+       This follows directly from the definition of [+].
+
+      - Next, suppose [n = S n'], where
+        
+        n' + m = m + n'.
+
+        We must now show that
+
+        (S n') + m = m + (S n').
+
+        By the def of [+], this follows from
+
+        S (n' + m) = S (m + n').
+
+        which is imeediate from the induction hypothesis. _Qed_.
 *)
 
 (* Do not modify the following line: *)

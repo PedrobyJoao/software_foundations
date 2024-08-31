@@ -1,8 +1,14 @@
-### Functional Programming
+## Intro
+
+### [Conceptual] Functional Programming
+
+TODO
 
 - One of the goals is to have pure computations:
 
-#### Enumerated types
+### [Conceptual] Enumerated types and constructors
+
+TODO
 
 - Constructors: what are? (they can be any token really)
 
@@ -31,15 +37,44 @@
 > recursively check whether [n-2] is even. Such functions are
 > introduced with the keyword [Fixpoint] instead of [Definition].
 
-- _destruction_ and _pattern matching_ relies on the constructors
+#### [Coq] _destruction_ and _pattern matching_ relies on the constructors
+
+TODO
 
 ## Basics
+
+#### [Conceptual] Proof assistants, unit tests...
 
 > Question: I got the point that we can have a certain func `fn`,
 > build theorems for it and prove them. However, is it correct to say that
 > for `fn` to be really reliable, we have to build and prove several theorems?
 > (like building different test scenarios for unit tests).
 
+So, proof assistants programming languages are not reliable magically.
+Yes, they're more reliable than the usual tests that we write with other
+programming languages. However, still, as for tests, we still have to write `n` theorems
+and prove them all.
+
 ## Induction
 
-- Difference between `destruction` and `induction` (the latter creates an assumption)
+#### [Coq] Difference between `destruction` and `induction` (the latter creates an assumption)
+
+TODO
+
+#### [Coq] Proofs within proofs to target rewrites
+
+TODO
+
+#### [Conceptual] Formal vs Informal proofs
+
+TODO
+
+#### [Conceptual] I don't understand why proofs using `induction` are logically legit.
+
+see `add_assoc''` formal and informal proofs
+
+Given a statement `forall n nat, P(n)`
+When we use `induction`, we separate in two subgoals, the second with `S n'` where `P(n')` is true.
+
+How is it legit to continue the proof claiming that `P(n')` is true if that is a not-proved assumption as `P(n)`.
+(We use `P(n')` to rewrite and prove `P(S n')`).
