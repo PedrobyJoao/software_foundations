@@ -1,5 +1,6 @@
 *.html
 *.glob
 *.vo*
+common/
 
 .aider*
