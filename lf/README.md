@@ -78,3 +78,11 @@ When we use `induction`, we separate in two subgoals, the second with `S n'` whe
 
 How is it legit to continue the proof claiming that `P(n')` is true if that is a not-proved assumption as `P(n)`.
 (We use `P(n')` to rewrite and prove `P(S n')`).
+
+### [Coq] targeting rewrite
+
+Use `rewrite add_comm with (n := p) (m := n).` and it'll rewrite `p` and `n` instead of looking for `n` and `m` terms.
+
+Or
+
+`replace (p + n) with (n + p) by apply add_comm.`
