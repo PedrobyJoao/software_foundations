@@ -1,12 +1,12 @@
 ## Intro
 
-### [Conceptual] Functional Programming
+## [Conceptual] Functional Programming
 
 TODO
 
 - One of the goals is to have pure computations:
 
-### [Conceptual] Enumerated types and constructors
+## [Conceptual] Enumerated types and constructors
 
 TODO
 
@@ -37,13 +37,13 @@ TODO
 > recursively check whether [n-2] is even. Such functions are
 > introduced with the keyword [Fixpoint] instead of [Definition].
 
-#### [Coq] _destruction_ and _pattern matching_ relies on the constructors
+### [Coq] _destruction_ and _pattern matching_ relies on the constructors
 
 TODO
 
 ## Basics
 
-#### [Conceptual] Proof assistants, unit tests...
+### [Conceptual] Proof assistants, unit tests...
 
 > Question: I got the point that we can have a certain func `fn`,
 > build theorems for it and prove them. However, is it correct to say that
@@ -57,19 +57,19 @@ and prove them all.
 
 ## Induction
 
-#### [Coq] Difference between `destruction` and `induction` (the latter creates an assumption)
+### [Coq] Difference between `destruction` and `induction` (the latter creates an assumption)
 
 TODO
 
-#### [Coq] Proofs within proofs to target rewrites
+### [Coq] Proofs within proofs to target rewrites
 
 TODO
 
-#### [Conceptual] Formal vs Informal proofs
+### [Conceptual] Formal vs Informal proofs
 
 TODO
 
-#### [Conceptual] I don't understand why proofs using `induction` are logically legit.
+### [Conceptual] I don't understand why proofs using `induction` are logically legit.
 
 see `add_assoc''` formal and informal proofs
 
@@ -78,6 +78,10 @@ When we use `induction`, we separate in two subgoals, the second with `S n'` whe
 
 How is it legit to continue the proof claiming that `P(n')` is true if that is a not-proved assumption as `P(n)`.
 (We use `P(n')` to rewrite and prove `P(S n')`).
+
+_Answer_: we're not claiming the truth of `P(n')`, what is being claimed is `P(n') -> P(S n')`.
+
+And if this conditional statement is true, then `P(n)` is true for all `n`.
 
 ### [Coq] targeting rewrite
 
