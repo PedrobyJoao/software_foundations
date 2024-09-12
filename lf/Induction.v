@@ -141,6 +141,7 @@ Abort.
     inductively defined sets, we often need a more powerful reasoning
     principle: _induction_.
 
+    IMPORTANT-NOTE
     Recall (from a discrete math course, probably) the _principle of
     induction over natural numbers_: If [P(n)] is some proposition
     involving a natural number [n] and we want to show that [P] holds for
@@ -150,6 +151,7 @@ Abort.
            n')];
          - conclude that [P(n)] holds for all [n].
 
+    IMPORTANT-NOTE
     In Coq, the steps are the same: we begin with the goal of proving
     [P(n)] for all [n] and break it down (by applying the [induction]
     tactic) into two separate subgoals: one where we must show [P(O)] and
@@ -568,7 +570,28 @@ Definition manual_grade_for_eqb_refl_informal : option (nat*string) := None.
 Theorem add_shuffle3 : forall n m p : nat,
   n + (m + p) = m + (n + p).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n m p.
+  rewrite -> add_comm.
+  rewrite <- add_assoc.
+  assert(H: p + n = n + p). (*I don't understand why I have to prove add_comm with different letters*)
+    { rewrite add_comm. reflexivity. }
+  rewrite H.
+  reflexivity.
+Qed.
+(* *)
+
+(** 
+The above proof could be written as:
+[
+Proof.
+  intros n m p.
+  rewrite -> add_comm.
+  rewrite <- add_assoc.
+  replace (p + n) with (n + p) by apply add_comm.
+  reflexivity.
+Qed.
+
+] *)
 
 (** Now prove commutativity of multiplication.  You will probably want
     to look for (or define and prove) a "helper" theorem to be used in
