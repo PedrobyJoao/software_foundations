@@ -597,10 +597,37 @@ Qed.
     to look for (or define and prove) a "helper" theorem to be used in
     the proof of this one. Hint: what is [n * (1 + k)]? *)
 
+Theorem mul_n_Sm: forall n m: nat,
+  n * S m = n + n * m.
+
+
+(* That is probably not pretty =P *)
+Proof.
+  intros n m. induction n as [| n' IHn'].
+  - simpl. reflexivity.
+  - simpl. 
+    rewrite (add_comm n' (m + n' * m)).
+    rewrite add_comm.
+    rewrite IHn'.
+    rewrite (add_comm (n' + n' * m)).
+    rewrite add_assoc.
+    rewrite (add_comm (m + n' * m)).
+    rewrite add_assoc.
+    replace (n' + m) with (m + n') by apply add_comm.
+    reflexivity.
+Qed.
+
 Theorem mul_comm : forall m n : nat,
   m * n = n * m.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  (* FILL IN HERE *) 
+  intros m n. induction n as [| n' IHn'].
+  - rewrite mul_0_r. reflexivity.
+  - simpl.
+    rewrite mul_n_Sm.
+    rewrite IHn'.
+    reflexivity.
+Qed.
 (** [] *)
 
 (** **** Exercise: 2 stars, standard, optional (plus_leb_compat_l)
