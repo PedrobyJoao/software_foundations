@@ -1,3 +1,7 @@
+### TODOs:
+
+- see other solutions for `mul_comm` proof (mine is ugly).
+
 ## Intro
 
 ## [Conceptual] Functional Programming
