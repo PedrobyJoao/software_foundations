@@ -1834,7 +1834,7 @@ Definition modifier_comparison (m1 m2 : modifier) : comparison :=
 Definition grade_comparison (g1 g2 : grade) : comparison :=
   match g1, g2 with
   | Grade l1 m1, Grade l2 m2 =>
-      match letter_comparison l1 l2 with
+      match (letter_comparison l1 l2) with
       | Eq => modifier_comparison m1 m2
       | _ => letter_comparison l1 l2 
       end
@@ -1946,8 +1946,10 @@ Qed.
     Our solution is under 10 lines of code total. *)
 Definition lower_grade (g : grade) : grade :=
   match g with
-  | Grade F Minus => Grade F Minus
-  | Grade l Minus => Grade (lower_letter l) Plus
+  | Grade l Minus => match l with
+                     | F => Grade F Minus
+                     | _ => Grade (lower_letter l) Plus
+                     end
   | Grade l Natural => Grade l Minus
   | Grade l Plus => Grade l Natural
   end.
@@ -2010,15 +2012,17 @@ Proof. simpl. reflexivity. Qed.
     in two cases.  The remaining case is the only one in which you
     need to destruct a [letter].  The case for [F] will probably
     benefit from [lower_grade_F_Minus].  *)
+(*
+   I have no idea how could I prove this.
+   I tried for 2 hrs.
+ *)
 Theorem lower_grade_lowers :
   forall (g : grade),
     grade_comparison (Grade F Minus) g = Lt ->
     grade_comparison (lower_grade g) g = Lt.
 Proof.
-  intros g.
-  intros H.
-  rewrite lower_letter_lowers.
-Qed.
+  Admitted.
+
 
 (** [] *)
 
@@ -2074,7 +2078,12 @@ Theorem no_penalty_for_mostly_on_time :
     (late_days <? 9 = true) ->
     apply_late_policy late_days g = g.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros l g.
+  intros H.
+  rewrite apply_late_policy_unfold.
+  rewrite H.
+  reflexivity.
+Qed.
 
 (** [] *)
 
@@ -2089,7 +2098,15 @@ Theorem grade_lowered_once :
     (grade_comparison (Grade F Minus) g = Lt) ->
     (apply_late_policy late_days g) = (lower_grade g).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros l g.
+  intros H1.
+  intros H2.
+  intros H3.
+  rewrite apply_late_policy_unfold.
+  rewrite H1.
+  rewrite H2.
+  reflexivity.
+Qed.
 
 (** [] *)
 End LateDays.
