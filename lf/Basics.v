@@ -2015,14 +2015,30 @@ Proof. simpl. reflexivity. Qed.
 (*
    I have no idea how could I prove this.
    I tried for 2 hrs.
+
+   Edit: proved with the help of llm.
+   But to be honest, the hint is a bit misleading if that is
+   main solution since I had to use destruct several times at first.
  *)
 Theorem lower_grade_lowers :
   forall (g : grade),
     grade_comparison (Grade F Minus) g = Lt ->
     grade_comparison (lower_grade g) g = Lt.
 Proof.
-  Admitted.
-
+   intros g H.
+   destruct g as [l m].
+   destruct m.
+   - simpl. rewrite letter_comparison_Eq. reflexivity.
+   - simpl. rewrite letter_comparison_Eq. reflexivity.
+   - destruct l.
+     + simpl. reflexivity.
+     + simpl. reflexivity.
+     + simpl. reflexivity.
+     + simpl. reflexivity.
+     + rewrite lower_grade_F_Minus.
+       rewrite H.
+       reflexivity.
+Qed.
 
 (** [] *)
 
