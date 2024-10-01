@@ -2020,7 +2020,7 @@ Proof. simpl. reflexivity. Qed.
    But to be honest, the hint is a bit misleading if that is
    main solution since I had to use destruct several times at first.
  *)
-Theorem lower_grade_lowers :
+Theorem lower_grade_lowers:
   forall (g : grade),
     grade_comparison (Grade F Minus) g = Lt ->
     grade_comparison (lower_grade g) g = Lt.
@@ -2162,16 +2162,61 @@ Inductive bin : Type :=
   | Z
   | B0 (n : bin)
   | B1 (n : bin).
+(*
+
+B1 Z
+(exp 2 0) * 1 + O
+
+B0 (B1 Z)
+[(exp 2 0) * 0] + [(exp 2 1) * 1] + O
+
+B1 (B1 Z)
+[(exp 2 0) * 1] + [(exp 2 1) * 1] + O
+
+B0 (B0 (B1 Z))
+[(exp 2 0) * 0] + [(exp 2 1) * 0] + [(exp 2 2) * 1] + O
+   2^1 * (0 + (2 * 1))
+
+   *)
+
 
 (** Complete the definitions below of an increment function [incr]
     for binary numbers, and a function [bin_to_nat] to convert
     binary numbers to unary numbers. *)
+(*
+I tried to get a hint from stackoverflow, unfortunately,
+I absorved an entire answer.
 
-Fixpoint incr (m:bin) : bin
-  (* REPLACE THIS LINE WITH ":= _your_definition_ ." *). Admitted.
+It happens when you're self-studying and get stuck somewhere
 
-Fixpoint bin_to_nat (m:bin) : nat
-  (* REPLACE THIS LINE WITH ":= _your_definition_ ." *). Admitted.
+What I learned:
+1. if the recursive function is too complicated for a simple func,
+then it's probably wrong.
+2. get hints from LLM (claiming to not answer with answer)
+*)
+Fixpoint incr (m:bin) : bin :=
+  match m with
+  | Z => B1 Z
+  | B0 n => B1 n
+  | B1 n => B0 (incr n)
+  end.
+
+(*
+B0 B1 Z
+   2 * bin_to_nat (B1 Z)
+   2 * (1 + (2 * bin_to_nat Z))
+   2 * (1 + (2 * O))
+   2 * (1 + (O))
+   2 * (1)
+   2
+ (2^0) * 0 + (2^1) * 1
+ *)
+Fixpoint bin_to_nat (m:bin) : nat :=
+  match m with
+  | Z => O
+  | B0 n => 2 * bin_to_nat n
+  | B1 n => (exp 2 0) + (2 * bin_to_nat n)
+  end.
 
 (** The following "unit tests" of your increment and binary-to-unary
     functions should pass after you have defined those functions correctly.
@@ -2180,24 +2225,57 @@ Fixpoint bin_to_nat (m:bin) : nat
     next chapter. *)
 
 Example test_bin_incr1 : (incr (B1 Z)) = B0 (B1 Z).
-(* FILL IN HERE *) Admitted.
+Proof. simpl. reflexivity. Qed.
 
 Example test_bin_incr2 : (incr (B0 (B1 Z))) = B1 (B1 Z).
-(* FILL IN HERE *) Admitted.
+Proof. simpl. reflexivity. Qed.
 
 Example test_bin_incr3 : (incr (B1 (B1 Z))) = B0 (B0 (B1 Z)).
-(* FILL IN HERE *) Admitted.
+Proof. simpl. reflexivity. Qed.
+
+Example test_bin_incr44 : (incr (B0 (B0 (B1 Z)))) = B1 (B0 (B1 Z)).
+Proof. simpl. reflexivity. Qed.
+
+Example test_bin_incr55 : (incr (B1 (B0 (B1 Z)))) = B0 (B1 (B1 Z)).
+Proof. simpl. reflexivity. Qed.
+
+Example test_bin_to_nat0 : bin_to_nat Z = 0.
+Proof. simpl. reflexivity. Qed.
+
+Example test_bin_to_nat1 : bin_to_nat (B1 Z) = 1.
+Proof. simpl. reflexivity. Qed.
+
+Example test_bin_to_nat2 : bin_to_nat (B0 (B1 Z)) = 2.
+Proof. simpl. reflexivity. Qed.
+
+Example test_bin_to_nat3 : bin_to_nat (B1 (B1 Z)) = 3.
+Proof. simpl. reflexivity. Qed.
+
+Example test_bin_to_nat4 : bin_to_nat (B0 (B0 (B1 Z))) = 4.
+Proof. simpl. reflexivity. Qed.
+
+Example test_bin_to_nat5 : bin_to_nat (B1 (B0 (B1 Z))) = 5.
+Proof. simpl. reflexivity. Qed.
+
+Example test_bin_to_nat6 : bin_to_nat (B0 (B1 (B1 Z))) = 6.
+Proof. simpl. reflexivity. Qed.
+
+Example test_bin_to_nat7 : bin_to_nat (B1 (B1 (B1 Z))) = 7.
+Proof. simpl. reflexivity. Qed.
+
+Example test_bin_to_nat8 : bin_to_nat (B0 (B0 (B0 (B1 Z)))) = 8.
+Proof. simpl. reflexivity. Qed.
 
 Example test_bin_incr4 : bin_to_nat (B0 (B1 Z)) = 2.
-(* FILL IN HERE *) Admitted.
+Proof. simpl. reflexivity. Qed.
 
 Example test_bin_incr5 :
         bin_to_nat (incr (B1 Z)) = 1 + bin_to_nat (B1 Z).
-(* FILL IN HERE *) Admitted.
+Proof. simpl. reflexivity. Qed.
 
 Example test_bin_incr6 :
         bin_to_nat (incr (incr (B1 Z))) = 2 + bin_to_nat (B1 Z).
-(* FILL IN HERE *) Admitted.
+Proof. simpl. reflexivity. Qed.
 
 (** [] *)
 
