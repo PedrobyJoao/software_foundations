@@ -620,7 +620,6 @@ Qed.
 Theorem mul_comm : forall m n : nat,
   m * n = n * m.
 Proof.
-  (* FILL IN HERE *) 
   intros m n. induction n as [| n' IHn'].
   - rewrite mul_0_r. reflexivity.
   - simpl.
@@ -641,7 +640,7 @@ Check leb.
 Theorem plus_leb_compat_l : forall n m p : nat,
   n <=? m = true -> (p + n) <=? (p + m) = true.
 Proof.
-  (* FILL IN HERE *) Admitted.
+Admitted.
 
 (** [] *)
 
@@ -731,11 +730,19 @@ Inductive bin : Type :=
     from [Basics].  That will make it possible for this file to
     be graded on its own. *)
 
-Fixpoint incr (m:bin) : bin
-  (* REPLACE THIS LINE WITH ":= _your_definition_ ." *). Admitted.
+Fixpoint incr (m:bin) : bin :=
+  match m with
+  | Z => B1 Z
+  | B0 n => B1 n
+  | B1 n => B0 (incr n)
+  end.
 
-Fixpoint bin_to_nat (m:bin) : nat
-  (* REPLACE THIS LINE WITH ":= _your_definition_ ." *). Admitted.
+Fixpoint bin_to_nat (m:bin) : nat :=
+  match m with
+  | Z => O
+  | B0 n => 2 * bin_to_nat n
+  | B1 n => (exp 2 0) + (2 * bin_to_nat n)
+  end.
 
 (** In [Basics], we did some unit testing of [bin_to_nat], but we
     didn't prove its correctness. Now we'll do so. *)
@@ -763,7 +770,18 @@ Fixpoint bin_to_nat (m:bin) : nat
 Theorem bin_to_nat_pres_incr : forall b : bin,
   bin_to_nat (incr b) = 1 + bin_to_nat b.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros b.
+  induction b.
+  - simpl. reflexivity.
+  - simpl. reflexivity.
+  - simpl.
+    rewrite IHb.
+    simpl.
+    rewrite <- add_comm.
+    rewrite add_0_r.
+    simpl.
+    reflexivity.
+Qed.
 
 (** [] *)
 
@@ -771,8 +789,40 @@ Proof.
 
 (** Write a function to convert natural numbers to binary numbers. *)
 
-Fixpoint nat_to_bin (n:nat) : bin
-  (* REPLACE THIS LINE WITH ":= _your_definition_ ." *). Admitted.
+
+(*
+3 = 
+3 / 2 = 1 (remainder 1) 
+1 / 2 = 0 (remainder 1) 
+B1 (B1 Z)
+
+13 =
+13 / 2 = 6 (remainder 1)
+6 / 2 = 3 (remainder 0)
+3 / 2 = 1 (remainder 1) 
+1 / 2 = 0 (remainder 1) 
+B1 (B0 (B1 (B1 Z)))
+ *)
+Fixpoint nat_to_bin (n:nat) : bin :=
+  match n with
+  | O => Z
+  | S n' => match mod (S n') with
+            | false => B1 (nat_to_bin n')
+            | _ => B0 (nat_to_bin n')
+            end
+  end.
+
+Example test_nat_to_bin0 : nat_to_bin 0 = Z.
+Proof. simpl. reflexivity. Qed.
+
+Example test_nat_to_bin1 : nat_to_bin 1 = B1 Z.
+Proof. simpl. reflexivity. Qed.
+
+Example test_nat_to_bin2 : nat_to_bin 2 = B0 (B1 Z).
+Proof. simpl. reflexivity. Qed.
+
+Example test_nat_to_bin3 : nat_to_bin 3 = B1 (B1 Z).
+Proof. simpl. reflexivity. Qed.
 
 (** Prove that, if we start with any [nat], convert it to [bin], and
     convert it back, we get the same [nat] which we started with.
@@ -787,6 +837,7 @@ Fixpoint nat_to_bin (n:nat) : bin
 Theorem nat_bin_nat : forall n, bin_to_nat (nat_to_bin n) = n.
 Proof.
   (* FILL IN HERE *) Admitted.
+
 
 (** [] *)
 
