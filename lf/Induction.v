@@ -803,6 +803,50 @@ B1 (B1 Z)
 1 / 2 = 0 (remainder 1) 
 B1 (B0 (B1 (B1 Z)))
  *)
+
+Definition ltb (n m : nat) : bool :=
+  match n with
+  | O => match m with
+         | O => false
+         | S m' => true
+         end
+  | S n' => match m with
+         | O => false
+         | S m' =>  leb (S n') m'
+          end
+  end.
+
+Notation "x <? y" := (ltb x y) (at level 70) : nat_scope.
+
+Fixpoint div (n m:nat) : nat :=
+  match n, m with
+  | O, _ => O
+  | _, O => O
+  | S n', S m' => match (S n') <? (S m') with
+                | true => 0
+                | false => 1 + div (n' - m') (S m')
+                end
+  end.
+
+Example test_div0 : div O 0 = O.
+Proof. simpl. reflexivity. Qed.
+
+Example test_div1 : div 2 1 = 2.
+Proof. simpl. reflexivity. Qed.
+
+Example test_div2 : div 4 2 = 2.
+Proof. simpl. reflexivity. Qed.
+
+Example test_div3 : div 9 3 = 3.
+Proof. simpl. reflexivity. Qed.
+
+Example test_div4 : div 13 3 = 4.
+Proof. simpl. reflexivity. Qed.
+
+Example test_nat_to_bin1 : nat_to_bin 1 = B1 Z.
+Proof. simpl. reflexivity. Qed.
+
+
 Fixpoint nat_to_bin (n:nat) : bin :=
   match n with
   | O => Z
