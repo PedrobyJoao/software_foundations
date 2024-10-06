@@ -785,24 +785,9 @@ Qed.
 
 (** [] *)
 
-(** **** Exercise: 3 stars, standard (nat_bin_nat) *)
-
-(** Write a function to convert natural numbers to binary numbers. *)
-
-
 (*
-3 = 
-3 / 2 = 1 (remainder 1) 
-1 / 2 = 0 (remainder 1) 
-B1 (B1 Z)
-
-13 =
-13 / 2 = 6 (remainder 1)
-6 / 2 = 3 (remainder 0)
-3 / 2 = 1 (remainder 1) 
-1 / 2 = 0 (remainder 1) 
-B1 (B0 (B1 (B1 Z)))
- *)
+Helpers for the next exercise:
+*)
 
 Definition ltb (n m : nat) : bool :=
   match n with
@@ -818,15 +803,20 @@ Definition ltb (n m : nat) : bool :=
 
 Notation "x <? y" := (ltb x y) (at level 70) : nat_scope.
 
-Fixpoint div (n m:nat) : nat :=
+Fixpoint recDiv (n m:nat) : nat :=
   match n, m with
   | O, _ => O
   | _, O => O
   | S n', S m' => match (S n') <? (S m') with
                 | true => 0
-                | false => 1 + div (n' - m') (S m')
+                | false => 1 + recDiv (n' - m') (S m')
                 end
   end.
+
+Definition div (n m:nat) :nat :=
+  recDiv n m.
+
+Notation "x /? y" := (div x y) (at level 70) : nat_scope.
 
 Example test_div0 : div O 0 = O.
 Proof. simpl. reflexivity. Qed.
@@ -843,17 +833,52 @@ Proof. simpl. reflexivity. Qed.
 Example test_div4 : div 13 3 = 4.
 Proof. simpl. reflexivity. Qed.
 
-Example test_nat_to_bin1 : nat_to_bin 1 = B1 Z.
+Fixpoint mod (n m: nat) : nat :=
+  match n, m with
+  | O, _ => O
+  | _, O => O
+  | S n', S m' => 
+      match (((div (S n') (S m')) * (S m')) <? (S n')) with
+      | true => S O
+      | _ => O
+      end
+  end.
+
+Example test_mod0 : mod O 0 = O.
 Proof. simpl. reflexivity. Qed.
 
+Example test_mod1 : mod 2 1 = O.
+Proof. simpl. reflexivity. Qed.
+
+Example test_mod3 : mod 3 2 = 1.
+Proof. simpl. reflexivity. Qed.
+
+Example test_mod33 : mod 1 2 = 1.
+Proof. simpl. reflexivity. Qed.
+
+Example test_mod4 : mod 9 3 = O.
+Proof. simpl. reflexivity. Qed.
+
+Example test_mod5 : mod 13 3 = 1.
+Proof. simpl. reflexivity. Qed.
+
+
+(** **** Exercise: 3 stars, standard (nat_bin_nat) *)
+
+(** Write a function to convert natural numbers to binary numbers. *)
 
 Fixpoint nat_to_bin (n:nat) : bin :=
   match n with
   | O => Z
-  | S n' => match mod (S n') with
-            | false => B1 (nat_to_bin n')
-            | _ => B0 (nat_to_bin n')
-            end
+  | S n' => 
+      match div (S n') 2 with
+      | O => B1 Z
+      | S m' => 
+          match even (S n') with
+          | true => B0 (nat_to_bin (S n' - S m'))
+          | false => B1 (nat_to_bin (S n' - S m' - 1)) 
+                end
+      end
   end.
 
 Example test_nat_to_bin0 : nat_to_bin 0 = Z.
@@ -868,6 +893,22 @@ Proof. simpl. reflexivity. Qed.
 Example test_nat_to_bin3 : nat_to_bin 3 = B1 (B1 Z).
 Proof. simpl. reflexivity. Qed.
 
+Example test_nat_to_bin4 : nat_to_bin 4 = (B0 (B0 (B1 Z))).
+Proof. simpl. reflexivity. Qed.
+
+Example test_nat_to_bin5 : nat_to_bin 5 = (B1 (B0 (B1 Z))).
+Proof. simpl. reflexivity. Qed.
+
+Example test_nat_to_bin6 : nat_to_bin 6 = (B0 (B1 (B1 Z))).
+Proof. simpl. reflexivity. Qed.
+
+Example test_nat_to_bin7 : nat_to_bin 7 = (B1 (B1 (B1 Z))).
+Proof. simpl. reflexivity. Qed.
+
+Example test_nat_to_bin8 : nat_to_bin 8 = (B0 (B0 (B0 (B1 Z)))).
+Proof. simpl. reflexivity. Qed.
+
+
 (** Prove that, if we start with any [nat], convert it to [bin], and
     convert it back, we get the same [nat] which we started with.
 
@@ -878,9 +919,24 @@ Proof. simpl. reflexivity. Qed.
     match the recursive structure of the program being verified, so
     make the recursions as simple as possible. *)
 
+(*
+
+bin_to_nat_pres_incr
+     : forall b : bin, bin_to_nat (incr b) = 1 + bin_to_nat b
+*)
+
 Theorem nat_bin_nat : forall n, bin_to_nat (nat_to_bin n) = n.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n.
+  induction n as [| n' IHn'].
+  - simpl. reflexivity.
+  - 
+    rewrite IHn' with (n' := S n').
+    rewrite <- IHn'.
+    rewrite <- bin_to_nat_pres_incr. 
+    rewrite <- IHn'.
+
+Qed.
 
 
 (** [] *)
